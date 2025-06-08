@@ -1,14 +1,14 @@
 import { Pressable, StyleSheet, Text } from "react-native"
 type ActionButtonProps = {
     active: boolean;
-    OnPress: () => void;
+    onPress: () => void;
     display: string;
 };
-export const ActionButton = ({ active, OnPress, display }: ActionButtonProps) => {
+export const ActionButton = ({ active, onPress, display }: ActionButtonProps) => {
     return (
         <Pressable
             style={active ? styles.contextButtonActive : null}
-            onPress={OnPress}
+            onPress={onPress}
         >
             <Text style={styles.contextButtonText}>
                 {display}

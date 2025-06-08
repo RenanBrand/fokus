@@ -1,31 +1,76 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { FokusButton } from "./components/buttons/FokusButton";
 import { ActionButton } from "./components/buttons/ActionButton";
 import { Timer } from "./components/Timer";
+import { IconPause, IconPlay } from "./components/Icons/index";
 
 const pomodoro = [
   {
     id: 'focus',
-    initialValue: 25,
+    initialValue: 25 * 60,
     image: require('../assets/images/foco.png'),
     display: 'Foco'
   },
   {
     id: 'short',
-    initialValue: 5,
+    initialValue: 5 * 60,
     image: require('../assets/images/descanso_curto.png'),
     display: 'Pausa curta'
   },
   {
     id: 'long',
-    initialValue: 15,
+    initialValue: 15 * 60,
     image: require('../assets/images/descanso_longo.png'),
     display: 'Pausa longa'
   },
 ]
 export default function Index() {
-  const [timerType, setTimerType] = useState(pomodoro[0])
+
+  const [timerType, setTimerType] = useState(pomodoro[0]);
+
+  const [seconds, setSeconds] = useState(pomodoro[0].initialValue)
+
+  const [timerRunning, setTimerRunning] = useState(false)
+
+
+  const timerRef = useRef<number | null>(null);
+
+const toggleTimerType = (newTimerType: any) => {
+    timerRef.current = null
+    setSeconds(newTimerType.initialValue)
+    clear()
+}
+
+  const clear = () => {
+    if (timerRef.current != null) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+      setTimerRunning(false)
+    }
+  }
+
+  const toggleTimer = () => {
+    if (timerRef.current) {
+      clear()
+      return
+    }
+
+    setTimerRunning(true)
+
+    const id = setInterval(() => {
+      setSeconds((oldState: any) => {
+        if (oldState === 0) {
+          clear()
+          return timerType.initialValue
+        }
+        return oldState - 1
+      })
+    }, 1000);
+
+    timerRef.current = id;
+  };
+
   return (
     <View style={styles.container}>
       <Image source={timerType.image} />
@@ -35,13 +80,17 @@ export default function Index() {
             <ActionButton
               key={p.id}
               active={timerType.id === p.id}
-              OnPress={() => setTimerType(p)}
+              onPress={() => toggleTimerType(p)}
               display={p.display}
             />
           ))}
         </View>
         <Timer totalSeconds={timerType.initialValue} />
-        <FokusButton />
+        <FokusButton
+          title={timerRunning ? 'Pausar' : 'Começar'}
+          icon={timerRunning ? <IconPause /> : <IconPlay />}
+          onPress={toggleTimer}
+        />
       </View>
       <View style={styles.footer}>
         <Text style={styles.footerText}>
