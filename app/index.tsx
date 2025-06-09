@@ -27,9 +27,9 @@ const pomodoro = [
 ]
 export default function Index() {
 
-  const [timerType, setTimerType] = useState(pomodoro[0]);
+  const [timerType, _setTimerType] = useState(pomodoro[0]);
 
-  const [seconds, setSeconds] = useState(pomodoro[0].initialValue)
+  const [_seconds, setSeconds] = useState(pomodoro[0].initialValue)
 
   const [timerRunning, setTimerRunning] = useState(false)
 
